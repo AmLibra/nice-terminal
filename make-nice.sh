@@ -1,4 +1,6 @@
 #!/bin/bash
+# based on Medium article by Code Slicer: https://ivanaugustobd.medium.com/your-terminal-can-be-much-much-more-productive-5256424658e8
+# author: Khalil M'hirsi, 2024
 
 printf "\n\nThis script will install and configure the following terminal improvements:\n"
 printf "  - Oh My Zsh\n"
@@ -82,6 +84,11 @@ else
 fi
 
 # Configure Powerlevel10k in .zshrc
+if grep -q "^ZSH_THEME=" ~/.zshrc; then
+    sed -i 's/^ZSH_THEME=.*/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc
+else
+    echo 'ZSH_THEME="powerlevel10k/powerlevel10k"' >> ~/.zshrc
+fi
 if ! grep -q "POWERLEVEL9K_MODE" ~/.zshrc; then
     echo "POWERLEVEL9K_MODE=\"nerdfont-complete\"" >> ~/.zshrc
     echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(...elements)" >> ~/.zshrc
