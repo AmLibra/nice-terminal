@@ -12,6 +12,7 @@ printf "  - Powerlevel10k\n"
 printf "  - colorls\n\n"
 
 printf "This script will also install the following common Linux dev tools:\n"
+printf "  - docker\n"
 printf "  - gcc\n"
 printf "  - zsh\n"
 printf "  - ruby-full\n"
@@ -26,6 +27,26 @@ sudo apt upgrade -y
 printf "Done.\n\n"
 
 printf "Installing common Linux dev tools..."
+for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+
+# Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+sudo docker run hello-world
+
 sudo apt install gcc zsh ruby-full git tmux curl ranger -y
 printf "Done.\n\n"
 
@@ -97,6 +118,26 @@ fi
 # Install colorls
 echo "alias ls=\"colorls --sd -A\"" >> ~/.zshrc
 sudo gem install colorls
+
+# Add gcommit function to ~/.zshrc if it's not already present
+if ! grep -q "gcommit()" ~/.zshrc; then
+    echo "Adding gcommit function to ~/.zshrc..."
+    cat << 'EOF' >> ~/.zshrc
+
+# gcommit function to add, commit, and push changes with a commit message
+gcommit() {
+    if [ -z "\$1" ]; then
+        echo "Error: Please provide a commit message."
+        return 1
+    fi
+    git add .
+    git commit -m "\$1"
+    git push
+}
+EOF
+else
+    echo "gcommit function already exists in ~/.zshrc."
+fi
 
 # Reload terminal
 source ~/.zshrc
