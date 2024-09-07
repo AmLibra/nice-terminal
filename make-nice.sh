@@ -27,32 +27,28 @@ sudo apt upgrade -y
 printf "Done.\n\n"
 
 printf "Installing common Linux dev tools..."
-for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
 
+sudo apt install build-essential gcc zsh ruby-full git tmux curl ranger -y
+
+for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
 # Add Docker's official GPG key:
-sudo apt-get update
 sudo apt-get install ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
-
 # Add the repository to Apt sources:
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-sudo docker run hello-world
-
-sudo apt install gcc zsh ruby-full git tmux curl ranger -y
 printf "Done.\n\n"
 
 # Install Oh My Zsh
 printf "Installing Oh My Zsh..."
-curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sh; zsh
+curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sh
 sudo usermod --shell $(which zsh) $(whoami)
 printf "Done.\n\n"
 
@@ -138,9 +134,6 @@ EOF
 else
     echo "gcommit function already exists in ~/.zshrc."
 fi
-
-# Reload terminal
-source ~/.zshrc
 
 printf "\n\nDon't forget to change the terminal font to Hack Regular Nerd Font and restart the terminal! \n\n"
  
